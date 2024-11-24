@@ -11,6 +11,9 @@ add_executable(monitoring_project
 )
 
 link_directories(${CMAKE_SOURCE_DIR}/lib)
+find_library(PROM_LIBRARY prom REQUIRED)
+find_library(PROMHTTP_LIBRARY promhttp REQUIRED)
+find_library(MICROHTTPD_LIBRARY microhttpd REQUIRED)
 
 target_link_libraries(monitoring_project
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/libprom.so
