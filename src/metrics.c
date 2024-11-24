@@ -1,5 +1,180 @@
-#include "metrics.h"
+#include "../include/metrics.h"
+/**
+ * @brief Get the context switches from /proc/stat
+ *
+ * @return double
+ */
+double get_ctxt()
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned long long ctxt_n;
+    fp = fopen("/proc/stat", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/stat");
+        return -1;
+    }
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        if (sscanf(buffer, "ctxt %llu", &ctxt_n) == 1)
+        {
+            break;
+        }
+    }
+    return ctxt_n;
+}
 
+/**
+ * @brief Get the net RX from /proc/net/dev
+ *
+ * @return double
+ */
+double get_net_RX()
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned long long net_RX;
+    fp = fopen("/proc/net/dev", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/net/dev");
+        return -1;
+    }
+    fgets(buffer, sizeof(buffer), fp); // Ignorar las primeras lineas de info
+    fgets(buffer, sizeof(buffer), fp);
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        unsigned long long temp_net_RX;
+        if (sscanf(buffer, "enp0s3: %*u %llu", &temp_net_RX) == 1)
+        {
+            net_RX = temp_net_RX;
+            break;
+        }
+    }
+
+    fclose(fp);
+    return net_RX;
+}
+/**
+ * @brief Get the net TX from /proc/net/dev
+ *
+ * @return double
+ */
+double get_net_TX()
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned long long net_TX;
+    fp = fopen("/proc/net/dev", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/net/dev");
+        return -1;
+    }
+    fgets(buffer, sizeof(buffer), fp); // Ignorar las primeras lineas de info
+    fgets(buffer, sizeof(buffer), fp);
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        unsigned long long temp_net_TX;
+        if (sscanf(buffer, "enp0s3: %*u %*u %*u %*u %*u %*u %*u %*u %*u %llu", &temp_net_TX) == 1)
+        {
+            net_TX = temp_net_TX;
+            break;
+        }
+    }
+    fclose(fp);
+    return net_TX;
+}
+/**
+ * @brief Get the number of processes from /proc
+ *
+ * @return double
+ */
+double get_proccesses()
+{
+    DIR* dir;
+    unsigned long long pr = 0;
+    struct dirent* entry;
+    dir = opendir("/proc");
+    if (dir == NULL)
+    {
+        perror("Error al abrir /proc");
+        return -1;
+    }
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (isdigit(*entry->d_name))
+        {
+            pr++;
+        }
+    }
+    closedir(dir);
+    return pr;
+}
+/**
+ * @brief Get the IO time from /proc/diskstats
+ *
+ * @return double
+ */
+double get_IO_time()
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned long long IO_time;
+    fp = fopen("/proc/diskstats", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/diskstats");
+        return -1;
+    }
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        unsigned long long temp_ruse, temp_wuse, ruse = 0, wuse = 0;
+        int matched =
+            sscanf(buffer, "%*d %*d %*s %*d %*d %*d %llu %*d %*d %*d %llu %*d %*d %*d %*d %*d %*d %*d %*d %*d",
+                   &temp_ruse, &temp_wuse);
+        if (matched == 2)
+        {
+            ruse += temp_ruse;
+            wuse += temp_wuse;
+            IO_time = ruse + wuse;
+        }
+    }
+    fclose(fp);
+    return IO_time;
+}
+/**
+ * @brief Get the free memory from /proc/meminfo
+ *
+ * @return double
+ */
+double get_free_memory()
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned long long free_mem;
+    fp = fopen("/proc/meminfo", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/meminfo");
+        return -1;
+    }
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        if (sscanf(buffer, "MemFree: %llu kB", &free_mem) == 1)
+        {
+            break;
+        }
+    }
+    fclose(fp);
+    return free_mem;
+}
+/**
+ * @brief Get the memory usage in percentage from /proc/meminfo
+ *
+ * @return double
+ */
 double get_memory_usage()
 {
     FILE* fp;
@@ -42,7 +217,11 @@ double get_memory_usage()
 
     return mem_usage_percent;
 }
-
+/**
+ * @brief Get the cpu usage in percentage from /proc/stat
+ *
+ * @return double
+ */
 double get_cpu_usage()
 {
     static unsigned long long prev_user = 0, prev_nice = 0, prev_system = 0, prev_idle = 0, prev_iowait = 0,

@@ -2,9 +2,9 @@
  * @file expose_metrics.h
  * @brief Programa para leer el uso de CPU y memoria y exponerlos como métricas de Prometheus.
  */
+#pragma once
 
 #include "metrics.h"
-#include "read_cpu_usage.h"
 #include <errno.h>
 #include <prom.h>
 #include <promhttp.h>
@@ -14,7 +14,39 @@
 #include <string.h>
 #include <unistd.h> // Para sleep
 
+/**
+ * Buffer size for reading files
+ */
 #define BUFFER_SIZE 256
+/**
+ * @brief Actualiza la métrica de cambios de contexto.
+ *
+ */
+void update_ctxt_gauge();
+/**
+ * @brief Actualiza la métrica de uso de red de ethernet (Transmision).
+ *
+ */
+void update_net_TX_gauge();
+/**
+ * @brief Actualiza la métrica de uso de red de ethernet (Recepción).
+ *
+ */
+void update_net_RX_gauge();
+/**
+ * @brief Actualiza la métrica de número de procesos.
+ *
+ */
+void update_proccesses_gauge();
+/**
+ * @brief Actualiza la métrica de tiempo de IO.
+ *
+ */
+void update_IO_gauge();
+/**
+ * @brief Actualiza la métrica de valor de memoria libre.
+ */
+void update_free_memory_gauge();
 
 /**
  * @brief Actualiza la métrica de uso de CPU.
@@ -36,7 +68,7 @@ void* expose_metrics(void* arg);
 /**
  * @brief Inicializar mutex y métricas.
  */
-void init_metrics();
+int init_metrics();
 
 /**
  * @brief Destructor de mutex
