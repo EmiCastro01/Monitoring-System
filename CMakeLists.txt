@@ -10,10 +10,7 @@ add_executable(monitoring_project
         src/expose_metrics.c
 )
 
-link_directories(${CMAKE_SOURCE_DIR}/lib)
-find_library(PROM_LIBRARY prom REQUIRED)
-find_library(PROMHTTP_LIBRARY promhttp REQUIRED)
-find_library(MICROHTTPD_LIBRARY microhttpd REQUIRED)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 target_link_libraries(monitoring_project
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/libprom.so
