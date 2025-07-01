@@ -22,6 +22,6 @@ add_library(
 
 add_executable(monitoring_project src/main.c src/metrics.c src/expose_metrics.c)
 
-target_link_libraries(monitoring_project prom promhttp tp3logic)
+target_link_libraries(monitoring_project prom promhttp test_pol)
 
 set_target_properties(monitoring_project PROPERTIES C_STANDARD 11)
