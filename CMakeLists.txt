@@ -25,7 +25,7 @@ add_library(promhttp STATIC ${PROMHTTP_SOURCES})
 add_executable(monitoring_project src/main.c src/metrics.c src/expose_metrics.c
                                   src/test_pol.c)
 
-add_executable(tp3logic src/test_pol.c src/metrics.c src/expose_metrics.c)
+add_library(tp3logic STATIC src/test_pol.c src/metrics.c src/expose_metrics.c)
 
 # Linkeo de dependencias
 
