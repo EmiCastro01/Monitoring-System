@@ -61,18 +61,3 @@ double test_politica(int metodo, const char* nombre)
     printf("Política: %s – Tiempo: %.2f ms\n", nombre, elapsed);
     return elapsed;
 }
-
-int main()
-{
-    printf("\n==== Test de asignación de memoria ====\n");
-
-    double t_bf = test_politica(BEST_FIT, "Best Fit");
-    double t_ff = test_politica(FIRST_FIT, "First Fit");
-    double t_wf = test_politica(WORST_FIT, "Worst Fit");
-
-    write_metrics(t_bf, t_ff, t_wf, 0.0);
-
-    printf("Métricas escritas en tmp/metrics.json\n");
-
-    return 0;
-}

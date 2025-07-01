@@ -68,11 +68,20 @@ void update_ctxt_gauge()
  * @brief Update the memory cosos
  */
 
-void update_memory_metrics(double bf_time, double ff_time, double wf_time)
+void update_memory_metrics(double bf_time, double ff_time, double wf_time, double frag_rate)
 {
+    pthread_mutex_lock(&lock);
     prom_gauge_set(best_fit_metric, bf_time, NULL);
+    pthread_mutex_unlock(&lock);
+    pthread_mutex_lock(&lock);
+
     prom_gauge_set(first_fit_metric, ff_time, NULL);
+    pthread_mutex_unlock(&lock);
+
+    pthread_mutex_lock(&lock);
+
     prom_gauge_set(worst_fit_metric, wf_time, NULL);
+    pthread_mutex_unlock(&lock);
 }
 void update_net_RX_gauge()
 {
@@ -285,7 +294,25 @@ int init_metrics()
         fprintf(stderr, "Error al inicializar el registro de Prometheus\n");
         return EXIT_FAILURE;
     }
-
+    // Creamos la métrica para el mejor ajuste
+    worst_fit_metric = prom_gauge_new("worst_fit", "Tiempo de ejecución del peor ajuste", 0, NULL);
+    if (worst_fit_metric == NULL)
+    {
+        fprintf(stderr, "Error al crear la métrica del peor ajuste\n");
+        return EXIT_FAILURE;
+    }
+    best_fit_metric = prom_gauge_new("best_fit", "Tiempo de ejecución del mejor ajuste", 0, NULL);
+    if (best_fit_metric == NULL)
+    {
+        fprintf(stderr, "Error al crear la métrica del mejor ajuste\n");
+        return EXIT_FAILURE;
+    }
+    first_fit_metric = prom_gauge_new("first_fit", "Tiempo de ejecución del primer ajuste", 0, NULL);
+    if (first_fit_metric == NULL)
+    {
+        fprintf(stderr, "Error al crear la métrica del primer ajuste\n");
+        return EXIT_FAILURE;
+    }
     // Creamos la métrica para el uso de CPU
     cpu_usage_metric = prom_gauge_new("cpu_usage_percentage", "Porcentaje de uso de CPU", 0, NULL);
     if (cpu_usage_metric == NULL)
@@ -343,6 +370,7 @@ int init_metrics()
         fprintf(stderr, "Error al crear la métrica de cambios de contexto\n");
         return EXIT_FAILURE;
     }
+
     // Registramos las métricas en el registro por defecto
     if (prom_collector_registry_must_register_metric(cpu_usage_metric) == NULL ||
         prom_collector_registry_must_register_metric(memory_usage_metric) == NULL ||
@@ -351,7 +379,10 @@ int init_metrics()
         prom_collector_registry_must_register_metric(proccesses_metric) == NULL ||
         prom_collector_registry_must_register_metric(extern_net_TX_metric) == NULL ||
         prom_collector_registry_must_register_metric(extern_net_RX_metric) == NULL ||
-        prom_collector_registry_must_register_metric(context_switch_metric) == NULL)
+        prom_collector_registry_must_register_metric(context_switch_metric) == NULL ||
+        prom_collector_registry_must_register_metric(best_fit_metric) == NULL ||
+        prom_collector_registry_must_register_metric(first_fit_metric) == NULL ||
+        prom_collector_registry_must_register_metric(worst_fit_metric) == NULL)
     {
         fprintf(stderr, "Error al registrar las métricas\n");
         return EXIT_FAILURE;

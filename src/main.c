@@ -1,4 +1,5 @@
 #include "../include/expose_metrics.h"
+#include "test_pol.h"
 #include <ctype.h>
 #include <dirent.h>
 #include <stdbool.h>
@@ -78,6 +79,12 @@ int main(int argc, char* argv[])
             {
                 update_ctxt_gauge();
             }
+            else if (strcmp(argv[i], "mem_metrics") == 0)
+            {
+                update_memory_metrics(test_politica(0, "best"), test_politica(1, "first"), test_politica(2, "worst"),
+                                      0.0);
+            }
+
             else
             {
                 fprintf(stderr, "Métrica desconocida: %s\n", argv[i]);
