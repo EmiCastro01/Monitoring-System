@@ -70,9 +70,9 @@ void update_ctxt_gauge()
 
 void update_memory_metrics(double bf_time, double ff_time, double wf_time)
 {
-    prom_gauge_set(best_fit_metric, bf_time);
-    prom_gauge_set(first_fit_metric, ff_time);
-    prom_gauge_set(worst_fit_metric, wf_time);
+    prom_gauge_set(best_fit_metric, bf_time, NULL);
+    prom_gauge_set(first_fit_metric, ff_time, NULL);
+    prom_gauge_set(worst_fit_metric, wf_time, NULL);
 }
 void update_net_RX_gauge()
 {
