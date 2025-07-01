@@ -17,7 +17,7 @@ add_library(promhttp STATIC ${PROMHTTP_SOURCES})
 
 # Incluir archivos de TP3 (test_politica y memory)
 add_library(
-  tp3logic STATIC src/tp3_logic.c
+  tp3logic STATIC src/test_pol.c
                   ${CMAKE_CURRENT_SOURCE_DIR}/../lib/memory/src/memory.c)
 
 add_executable(monitoring_project src/main.c src/metrics.c src/expose_metrics.c)
