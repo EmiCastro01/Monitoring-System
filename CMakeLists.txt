@@ -30,4 +30,4 @@ add_executable(tp3logic src/test_pol.c)
 
 # Linkeá todas las dependencias necesarias (incluye memory)
 target_link_libraries(monitoring_project prom promhttp memory)
-target_link_libraries(tp3logic prom promhttp memory)
+target_link_libraries(tp3logic prom promhttp memory microhttpd)
