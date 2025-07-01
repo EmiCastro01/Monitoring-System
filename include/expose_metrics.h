@@ -5,8 +5,8 @@
 #pragma once
 
 #include "metrics.h"
+#include "prom.h"
 #include <errno.h>
-#include <prom.h>
 #include <promhttp.h>
 #include <pthread.h>
 #include <stdio.h>

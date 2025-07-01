@@ -1,0 +1,3 @@
+[submodule "lib/prom"]
+	path = lib/prom
+	url = https://github.com/digitalocean/prometheus-client-c.git
