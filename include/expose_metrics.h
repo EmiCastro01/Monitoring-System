@@ -74,3 +74,8 @@ int init_metrics();
  * @brief Destructor de mutex
  */
 void destroy_mutex();
+/*+
+ *  @brief Actualiza las métricas de memoria con los tiempos de ejecución de las políticas de asignación y la tasa de
+ * fragmentación.
+ */
+void update_memory_metrics(double bf_time, double ff_time, double wf_time, double frag_rate);
