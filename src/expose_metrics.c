@@ -27,6 +27,15 @@ static prom_gauge_t* extern_net_RX_metric = NULL;
 /** Métrica de Prometheus para los cambios de contexto */
 static prom_gauge_t* context_switch_metric = NULL;
 
+/** Metrica de Prometheus para el mejor ajuste */
+static prom_gauge_t* best_fit_metric = NULL;
+
+/** Métrica de Prometheus para el primer ajuste */
+static prom_gauge_t* first_fit_metric = NULL;
+
+/** Metrica de Prometheus para el peor ajuste */
+static prom_gauge_t* worst_fit_metric = NULL;
+
 /**
  * @brief Update the context switch metric
  *
@@ -54,6 +63,17 @@ void update_ctxt_gauge()
  * @brief Update the net RX metric
  *
  */
+
+/**
+ * @brief Update the memory cosos
+ */
+
+void update_memory_metrics(double bf_time, double ff_time, double wf_time)
+{
+    prom_gauge_set(best_fit_metric, bf_time);
+    prom_gauge_set(first_fit_metric, ff_time);
+    prom_gauge_set(worst_fit_metric, wf_time);
+}
 void update_net_RX_gauge()
 {
     if (extern_net_RX_metric == NULL)
