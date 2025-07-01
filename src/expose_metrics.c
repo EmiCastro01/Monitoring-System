@@ -1,5 +1,5 @@
 #include "../include/expose_metrics.h"
-
+#include "test_pol.h"
 /** Mutex para sincronización de hilos */
 pthread_mutex_t lock;
 
